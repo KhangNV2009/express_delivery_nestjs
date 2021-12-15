@@ -17,6 +17,7 @@ import { DeliveryHistory } from 'src/delivery-histories/entities/delivery-histor
 import { CreateDeliveryHistoryDto } from 'src/delivery-histories/dto/create-delivery-history.dto';
 import { Vehicle } from 'src/vehicles/entities/vehicle.entity';
 import { CreateDriverDto } from './dto/create-driver.dto';
+import { UpdateUserAvatarDto } from './dto/update-user-avatar';
 
 @Injectable()
 export class UsersService {
@@ -81,6 +82,15 @@ export class UsersService {
     let user = await this.findOne(id);
     user.fullName = fullName;
     user.phoneNumber = phoneNumber;
+    return await this.usersRepository.update(user, {
+      where: { id: id },
+    })
+  }
+
+  async updateAvatar(info: UpdateUserAvatarDto): Promise<any> {
+    const { id, avatar } = info;
+    let user = await this.findOne(id);
+    user.avatar = avatar;
     return await this.usersRepository.update(user, {
       where: { id: id },
     })

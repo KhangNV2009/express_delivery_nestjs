@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req, Put } from '@nestjs/common';
 import { Auth } from 'src/jwt/auth.decorator';
 import { JwtPayload } from 'src/jwt/auth.payload';
 import { RoleType } from 'src/jwt/roles.guard';
@@ -25,14 +25,34 @@ export class WarehousesController {
     return await this.warehousesService.getWarehouseDetail(params.id);
   }
   @Auth(RoleType.CUSTOMER)
+  @Put(':id')
+  async createWareHouse(
+    @Param('id') id: number,
+    @Body() body: CreateWarehouseDto,
+    @Req() request: Express.Request,
+  ): Promise<any> {
+    const user = request.user as JwtPayload;
+    body.customerId = user.id;
+    await this.warehousesService.updateWarehouse(body, id);
+    return 'Create successfully';
+  }
+
+  @Auth(RoleType.CUSTOMER)
   @Post()
-  async createWareHouse(@Body() body: CreateWarehouseDto): Promise<any> {
-    return await this.warehousesService.createWarehouse(body);
-  } 
+  async updateWareHouse(
+    @Body() body: CreateWarehouseDto,
+    @Req() request: Express.Request,
+  ): Promise<any> {
+    const user = request.user as JwtPayload;
+    body.customerId = user.id;
+    await this.warehousesService.createWarehouse(body);
+    return 'Create successfully';
+  }
 
   @Auth(RoleType.CUSTOMER)
   @Delete(':id')
   async deleteWareHouse(@Param() params,): Promise<any> {
-    return await this.warehousesService.deleteWarehouse(params.id);
+    await this.warehousesService.deleteWarehouse(params.id);
+    return "remove successfully";
   }
 }

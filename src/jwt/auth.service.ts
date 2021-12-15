@@ -8,7 +8,7 @@ export class AuthService {
   constructor(private usersService: UsersService) {}
 
   async signPayload(payload: JwtPayload) {
-    return sign(payload, 'secretKey', { expiresIn: '12h' });
+    return sign(payload, 'secretKey', { expiresIn: '12d' });
   }
 
   async validateUser(payload: JwtPayload) {

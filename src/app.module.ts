@@ -7,6 +7,7 @@ import { DatabaseModule } from './database/database.module';
 import { AllExceptionModule } from './filter-exception/all-exception.module';
 import { TransformModule } from './interceptors/transform.module';
 import { RolesModule } from './roles/roles.module';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -15,7 +16,7 @@ import { RolesModule } from './roles/roles.module';
     DatabaseModule,
     TransformModule,
     RolesModule,
-    AllExceptionModule,
+    // AllExceptionModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -15,13 +15,34 @@ import { deliveryHistoriesProviders } from 'src/delivery-histories/delivery-hist
 import { VehiclesService } from 'src/vehicles/vehicles.service';
 import { vehiclesProviders } from 'src/vehicles/vehicles.provider';
 import { AuthService } from 'src/jwt/auth.service';
+import { JwtModule } from '@nestjs/jwt';
+import { PassportModule } from '@nestjs/passport';
+import { JwtStrategy } from 'src/jwt/jwt.strategy';
+import { JwtAuthGuard } from 'src/jwt/jwt-auth.guard';
+import { RolesGuard } from 'src/jwt/roles.guard';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
+  imports: [
+    JwtModule.register({
+      secret: 'secretKey',
+      signOptions: { expiresIn: "12d" },
+    }),
+    MulterModule.registerAsync({
+      imports: [],
+      useFactory: () => ({
+        dest: './upload',
+      }),
+    }),
+  ],
   controllers: [UsersController],
   providers: [
+    AuthService,
+    JwtStrategy,
+    JwtAuthGuard,
+    RolesGuard,
     UsersService, 
     ...usersProviders,
-    AuthService,
     LocationsService,
     ...locationsProviders,
     SessionsService,
