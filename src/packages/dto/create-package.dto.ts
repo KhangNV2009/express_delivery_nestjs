@@ -6,4 +6,6 @@ export class CreatePackageDto {
     category: string;   
 
     warehouseId: number;
+
+    state: number;
 }

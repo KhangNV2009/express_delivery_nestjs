@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req, Put } from '@nestjs/common';
-import { Auth } from 'src/jwt/auth.decorator';
-import { JwtPayload } from 'src/jwt/auth.payload';
-import { RoleType } from 'src/jwt/roles.guard';
+import { Controller, Get, Post, Body, Param, Delete, Req, Put } from '@nestjs/common';
+import { Auth } from 'src/auth/auth.decorator';
+import { RoleType } from 'src/auth/roles.guard';
+import { JwtPayload } from 'src/auth/types/jwt.payload.type';
+import { GetCurrentUserId } from 'src/common/decorators';
 import { CreateWarehouseDto } from './dto/create-warehouse.dto';
 import { WarehousesService } from './warehouses.service';
 
@@ -26,7 +27,7 @@ export class WarehousesController {
   }
   @Auth(RoleType.CUSTOMER)
   @Put(':id')
-  async createWareHouse(
+  async updateWarehouse(
     @Param('id') id: number,
     @Body() body: CreateWarehouseDto,
     @Req() request: Express.Request,
@@ -39,12 +40,11 @@ export class WarehousesController {
 
   @Auth(RoleType.CUSTOMER)
   @Post()
-  async updateWareHouse(
+  async createWareHouse(
     @Body() body: CreateWarehouseDto,
-    @Req() request: Express.Request,
+    @GetCurrentUserId() userId: any,
   ): Promise<any> {
-    const user = request.user as JwtPayload;
-    body.customerId = user.id;
+    body.customerId = userId;
     await this.warehousesService.createWarehouse(body);
     return 'Create successfully';
   }

@@ -1,26 +1,39 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
+import { Op } from 'sequelize';
 import { CreatePackageDto } from './dto/create-package.dto';
 import { UpdatePackageDto } from './dto/update-package.dto';
+import { Package } from './entities/package.entity';
 
 @Injectable()
 export class PackagesService {
-  create(createPackageDto: CreatePackageDto) {
-    return 'This action adds a new package';
+  constructor(
+    @Inject('PACKAGES_REPOSITORY')
+    private packagesRepository: typeof Package,
+  ) { }
+
+  async createPackage(dto: CreatePackageDto) {
+    dto.state = 1;
+    return await this.packagesRepository.create(dto);
   }
 
-  findAll() {
-    return `This action returns all packages`;
+  async updateStatePackge(state: number, id: number) {
+    return await this.packagesRepository.update(
+      { state: state },
+      {
+        where: {
+          id: id,
+        }
+      });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} package`;
-  }
-
-  update(id: number, updatePackageDto: UpdatePackageDto) {
-    return `This action updates a #${id} package`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} package`;
+  async findPackageByState(state: number, warehouseId: number) {
+    return await this.packagesRepository.findAll({
+      where: {
+        [Op.and]: [
+          { state: state, },
+          { warehouseId: warehouseId, },
+        ]
+      }
+    });
   }
 }

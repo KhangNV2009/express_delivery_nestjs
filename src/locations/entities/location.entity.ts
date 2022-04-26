@@ -1,4 +1,4 @@
-import { AutoIncrement, Column, HasOne, Model, PrimaryKey, Table } from "sequelize-typescript";
+import { AutoIncrement, Column, ForeignKey, HasOne, Model, PrimaryKey, Table } from "sequelize-typescript";
 import { DeliveryOrder } from "src/delivery-orders/entities/delivery-order.entity";
 import { User } from "src/users/entities/user.entity";
 import { Warehouse } from "src/warehouses/entities/warehouse.entity";
@@ -9,7 +9,7 @@ export class Location extends Model {
     @PrimaryKey
     @Column
     id: number;
-
+    
     @Column
     lat: string;
 

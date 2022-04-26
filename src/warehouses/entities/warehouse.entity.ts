@@ -33,7 +33,4 @@ export class Warehouse extends Model {
 
     @HasMany(() => DeliveryOrder)
     deliveryOrders: DeliveryOrder[];
-
-    @BelongsToMany(() => User, () => DeliveryOrder)
-    drivers: User[];
 }

@@ -1,5 +1,5 @@
 export class CreateDeliveryHistoryDto {
-    deliveryOrderId: number;
+    deliveryId: number;
     title: string;
     description: string;
 }

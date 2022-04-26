@@ -1,12 +1,26 @@
-import { HttpAdapterHost, NestFactory } from '@nestjs/core';
+import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { AllExceptionsFilter } from './filter-exception/all-exception.filter';
 import * as bodyParser from 'body-parser';
 import * as multer from 'multer';
+import { ConfigService } from '@nestjs/config';
+import { ServiceAccount } from 'firebase-admin';
+import * as firebase from 'firebase-admin';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     bodyParser: true,
+  });
+  const configService: ConfigService = app.get(ConfigService);
+
+  const firebaseConfig: ServiceAccount = {
+    "projectId": configService.get<string>('FIREBASE_PROJECT_ID'),
+    "privateKey": configService.get<string>('FIREBASE_PRIVATE_KEY').replace(/\\n/g, '\n'),
+    "clientEmail": configService.get<string>('FIREBASE_CLIENT_EMAIL'),
+  };
+
+  firebase.initializeApp({
+    credential: firebase.credential.cert(firebaseConfig),
+    databaseURL: "https://xxxxx.firebaseio.com",
   });
 
   await app.init();

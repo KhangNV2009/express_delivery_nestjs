@@ -1,53 +1,46 @@
-import { BelongsTo, Column, ForeignKey, PrimaryKey, Model, Table, HasOne, HasMany } from "sequelize-typescript";
+import { BelongsTo, Column, ForeignKey, PrimaryKey, Model, Table, HasMany, AutoIncrement, HasOne } from "sequelize-typescript";
 import { DeliveryHistory } from "src/delivery-histories/entities/delivery-history.entity";
+import { DeliveryReports } from "src/delivery-reports/entities/delivery-report.entity";
 import { Location } from "src/locations/entities/location.entity";
 import { Package } from "src/packages/entities/package.entity";
+import { Session } from "src/sessions/entities/session.entity";
 import { User } from "src/users/entities/user.entity";
 import { Warehouse } from "src/warehouses/entities/warehouse.entity";
 
 @Table
 export class DeliveryOrder extends Model {
-    @ForeignKey(() => User)
+    @AutoIncrement
     @PrimaryKey
     @Column
-    authorId: number;
+    id: number;
+
+    @ForeignKey(() => User)
+    @Column
+    customerId: number;
 
     @ForeignKey(() => Warehouse)
-    @PrimaryKey
     @Column
     warehouseId: number;
-
-    @ForeignKey(() => Package)
-    @PrimaryKey
-    @Column
-    packageId: number;
-
-    @Column
-    status: string;
-
-    @Column
-    price: string;
 
     @ForeignKey(() => Location)
     @Column
     locationId: number;
 
-    @ForeignKey(() => DeliveryHistory)
     @Column
-    deliveryHistoryId: number;
-
-    @BelongsTo(() => DeliveryHistory)
-    deliveryOrder: DeliveryHistory;
+    state: number;
 
     @BelongsTo(() => Location)
     location: Location;
 
-    @BelongsTo(() => User)
-    driver: User;
-
     @BelongsTo(() => Warehouse)
     warehouse: Warehouse;
 
-    @BelongsTo(() => Package)
-    package: Package;
+    @HasMany(() => DeliveryHistory)
+    deliveryHistories: DeliveryHistory[];
+
+    @HasMany(() => DeliveryReports)
+    deliveryReports: DeliveryReports[];
+
+    @HasMany(() => Session)
+    session: Session[];
 }

@@ -1,4 +1,5 @@
-import { AutoIncrement, Column, PrimaryKey, Table, Model, ForeignKey, BelongsTo, HasOne, HasMany, BelongsToMany, IsEmail } from "sequelize-typescript";
+import { AutoIncrement, Column, PrimaryKey, Table, Model, ForeignKey, BelongsTo, HasOne, HasMany, BelongsToMany, IsEmail, Unique } from "sequelize-typescript";
+import { AppDevice } from "src/app-device/entities/app-device.entity";
 import { Chat } from "src/chats/entities/chat.entity";
 import { DeliveryOrder } from "src/delivery-orders/entities/delivery-order.entity";
 import { Location } from "src/locations/entities/location.entity";
@@ -14,6 +15,7 @@ export class User extends Model {
     @Column
     id: number;
 
+    @Unique
     @Column
     email: string;
 
@@ -32,6 +34,9 @@ export class User extends Model {
     @ForeignKey(() => Role)
     @Column
     roleId: number;
+
+    @Column
+    hashedRt: string;
 
     @BelongsTo(() => Role)
     role: Role;
@@ -58,6 +63,6 @@ export class User extends Model {
     @HasMany(() => DeliveryOrder)
     deliveryOrders: DeliveryOrder[];
 
-    @BelongsToMany(() => Warehouse, () => DeliveryOrder)
-    warehouseDelivery: Warehouse[];
+    @HasMany(() => AppDevice)
+    appDevices: AppDevice[];
 }

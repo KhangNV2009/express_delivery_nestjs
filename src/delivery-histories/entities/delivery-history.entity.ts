@@ -1,4 +1,4 @@
-import { AutoIncrement, BelongsTo, Column, ForeignKey, PrimaryKey, Table, Model, HasOne } from "sequelize-typescript";
+import { AutoIncrement, BelongsTo, Column, ForeignKey, PrimaryKey, Table, Model } from "sequelize-typescript";
 import { DeliveryOrder } from "src/delivery-orders/entities/delivery-order.entity";
 
 @Table
@@ -8,12 +8,16 @@ export class DeliveryHistory extends Model {
     @Column
     id: number;
 
+    @ForeignKey(() => DeliveryOrder)
+    @Column
+    deliveryId: number;
+
     @Column
     title: string;
 
     @Column
     description: string;
 
-    @HasOne(() => DeliveryOrder)
-    deliveryOrder: DeliveryOrder;
+    @BelongsTo(() => DeliveryOrder)
+    delivery: DeliveryOrder;
 }

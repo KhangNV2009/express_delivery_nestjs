@@ -1,34 +1,23 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
+import { Auth } from 'src/auth/auth.decorator';
+import { RoleType } from 'src/auth/roles.guard';
+import { GetCurrentUserId } from 'src/common/decorators';
 import { SessionsService } from './sessions.service';
-import { CreateSessionDto } from './dto/create-session.dto';
-import { UpdateSessionDto } from './dto/update-session.dto';
 
 @Controller('sessions')
 export class SessionsController {
-  constructor(private readonly sessionsService: SessionsService) {}
-
-  @Post()
-  create(@Body() createSessionDto: CreateSessionDto) {
-    return this.sessionsService.create(createSessionDto);
+  constructor(private readonly sessionsService: SessionsService) {
   }
 
-  @Get()
-  findAll() {
-    return this.sessionsService.findAll();
+  @Auth(RoleType.CUSTOMER)
+  @Get('/customer')
+  getCustomerSession(@GetCurrentUserId() customerId: number) {
+    return this.sessionsService.getCustomerSession(customerId);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.sessionsService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSessionDto: UpdateSessionDto) {
-    return this.sessionsService.update(+id, updateSessionDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.sessionsService.remove(+id);
+  @Auth(RoleType.DRIVER)
+  @Get('/driver')
+  getDriverSession(@GetCurrentUserId() driverId: number) {
+    return this.sessionsService.getDriverSession(driverId);
   }
 }

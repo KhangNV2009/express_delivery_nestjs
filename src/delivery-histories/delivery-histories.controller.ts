@@ -1,34 +1,17 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
+import { Auth } from 'src/auth/auth.decorator';
+import { RoleType } from 'src/auth/roles.guard';
+import { GetCurrentUserId } from 'src/common/decorators';
 import { DeliveryHistoriesService } from './delivery-histories.service';
-import { CreateDeliveryHistoryDto } from './dto/create-delivery-history.dto';
-import { UpdateDeliveryHistoryDto } from './dto/update-delivery-history.dto';
 
 @Controller('delivery-histories')
 export class DeliveryHistoriesController {
-  constructor(private readonly deliveryHistoriesService: DeliveryHistoriesService) {}
-
-  @Post()
-  create(@Body() createDeliveryHistoryDto: CreateDeliveryHistoryDto) {
-    return this.deliveryHistoriesService.create(createDeliveryHistoryDto);
+  constructor(private readonly deliveryHistoriesService: DeliveryHistoriesService) {
   }
 
+  @Auth(RoleType.CUSTOMER)
   @Get()
-  findAll() {
-    return this.deliveryHistoriesService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.deliveryHistoriesService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateDeliveryHistoryDto: UpdateDeliveryHistoryDto) {
-    return this.deliveryHistoriesService.update(+id, updateDeliveryHistoryDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.deliveryHistoriesService.remove(+id);
+  getHistories(@GetCurrentUserId() customerId: number) {
+    return this.deliveryHistoriesService.findHistories(customerId);
   }
 }

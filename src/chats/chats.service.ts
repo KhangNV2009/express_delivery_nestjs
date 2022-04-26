@@ -1,26 +1,32 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
+import { User } from 'src/users/entities/user.entity';
 import { CreateChatDto } from './dto/create-chat.dto';
-import { UpdateChatDto } from './dto/update-chat.dto';
+import { PagingDto } from './dto/paging.dto';
+import { Chat } from './entities/chat.entity';
 
 @Injectable()
 export class ChatsService {
-  create(createChatDto: CreateChatDto) {
-    return 'This action adds a new chat';
-  }
+    constructor(
+        @Inject('CHATS_REPOSITORY')
+        private chatsRepository: typeof Chat,
+    ) { }
 
-  findAll() {
-    return `This action returns all chats`;
-  }
+    async createChatMessage(dto: CreateChatDto) {
+        return await this.chatsRepository.create(dto);
+    }
 
-  findOne(id: number) {
-    return `This action returns a #${id} chat`;
-  }
+    async createChatMedia(dto: CreateChatDto) {
+        return await this.chatsRepository.create(dto);
+    }
 
-  update(id: number, updateChatDto: UpdateChatDto) {
-    return `This action updates a #${id} chat`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} chat`;
-  }
+    async getChats(sessionId: number, query: PagingDto) {
+        const offset = (query.page - 1) * query.limit;
+        return await this.chatsRepository.findAndCountAll({
+            where: { sessionId: sessionId },
+            order: [['createdAt', 'ASC']],
+            limit: query.limit,
+            offset: offset,
+            include: [User]
+        });
+    }
 }

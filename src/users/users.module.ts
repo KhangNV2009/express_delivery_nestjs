@@ -14,13 +14,11 @@ import { DeliveryHistory } from 'src/delivery-histories/entities/delivery-histor
 import { deliveryHistoriesProviders } from 'src/delivery-histories/delivery-histories.provider';
 import { VehiclesService } from 'src/vehicles/vehicles.service';
 import { vehiclesProviders } from 'src/vehicles/vehicles.provider';
-import { AuthService } from 'src/jwt/auth.service';
+import { AuthService } from 'src/auth/auth.service';
 import { JwtModule } from '@nestjs/jwt';
-import { PassportModule } from '@nestjs/passport';
-import { JwtStrategy } from 'src/jwt/jwt.strategy';
-import { JwtAuthGuard } from 'src/jwt/jwt-auth.guard';
-import { RolesGuard } from 'src/jwt/roles.guard';
+import { RolesGuard } from 'src/auth/roles.guard';
 import { MulterModule } from '@nestjs/platform-express';
+import { AccessTokenStrategy } from 'src/auth/strategies';
 
 @Module({
   imports: [
@@ -38,8 +36,7 @@ import { MulterModule } from '@nestjs/platform-express';
   controllers: [UsersController],
   providers: [
     AuthService,
-    JwtStrategy,
-    JwtAuthGuard,
+    AccessTokenStrategy,
     RolesGuard,
     UsersService, 
     ...usersProviders,

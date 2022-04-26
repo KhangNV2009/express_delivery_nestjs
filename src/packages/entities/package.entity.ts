@@ -17,7 +17,10 @@ export class Package extends Model {
     weight: number;
 
     @Column
-    category: string;   
+    description: string;   
+
+    @Column
+    state: number; 
 
     @ForeignKey(() => Warehouse)
     @Column
@@ -25,10 +28,4 @@ export class Package extends Model {
 
     @BelongsTo(() => Warehouse)
     warehouse: Warehouse;
-
-    @HasMany(() => DeliveryOrder)
-    deliveryOrders: DeliveryOrder[];
-
-    @BelongsToMany(() => User, () => DeliveryOrder)
-    drivers: User[];
 }

@@ -1,26 +1,56 @@
-import { Injectable } from '@nestjs/common';
-import { CreateSessionDto } from './dto/create-session.dto';
-import { UpdateSessionDto } from './dto/update-session.dto';
+import { Inject, Injectable } from '@nestjs/common';
+import { Chat } from 'src/chats/entities/chat.entity';
+import { Session } from './entities/session.entity';
 
 @Injectable()
 export class SessionsService {
-  create(createSessionDto: CreateSessionDto) {
-    return 'This action adds a new session';
+  constructor(
+    @Inject('SESSIONS_REPOSITORY')
+    private sessionsRepository: typeof Session,
+    @Inject('CHATS_REPOSITORY')
+    private chatsRepository: typeof Chat,
+  ) { }
+
+  async createSession(customerId: number, driverId: number, deliveryId: number) {
+    return await this.sessionsRepository.create({
+      customerId: customerId,
+      driverId: driverId,
+      deliveryId: deliveryId,
+    });
   }
 
-  findAll() {
-    return `This action returns all sessions`;
+  async deleteSession(deliveryId: number) {
+    const session = await this.sessionsRepository.findOne({where: { deliveryId: deliveryId }})
+    const chats = await this.chatsRepository.findAll({where: { sessionId: session.id }})
+    await chats.forEach( async (chat) => {
+      await chat.destroy();
+    });
+    return await session.destroy();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} session`;
+  async getCustomerSession(customerId: number) {
+    return await this.sessionsRepository.findAll({
+      where: { customerId: customerId },
+      include: [
+        {
+          model: Chat,
+          order: [['createdAt', 'DESC']],
+          limit: 1,
+        },
+      ]
+    });
   }
 
-  update(id: number, updateSessionDto: UpdateSessionDto) {
-    return `This action updates a #${id} session`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} session`;
+  async getDriverSession(driverId: number) {
+    return await this.sessionsRepository.findAll({
+      where: { driverId: driverId },
+      include: [
+        {
+          model: Chat,
+          order: [['createdAt', 'DESC']],
+          limit: 1,
+        },
+      ]
+    });
   }
 }

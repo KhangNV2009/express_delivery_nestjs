@@ -1,34 +1,22 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Body, Get, Query } from '@nestjs/common';
 import { PackagesService } from './packages.service';
 import { CreatePackageDto } from './dto/create-package.dto';
-import { UpdatePackageDto } from './dto/update-package.dto';
+import { Auth } from 'src/auth/auth.decorator';
+import { RoleType } from 'src/auth/roles.guard';
 
 @Controller('packages')
 export class PackagesController {
   constructor(private readonly packagesService: PackagesService) {}
 
+  @Auth(RoleType.CUSTOMER)
   @Post()
-  create(@Body() createPackageDto: CreatePackageDto) {
-    return this.packagesService.create(createPackageDto);
+  createPackage(@Body() dto: CreatePackageDto) {
+    return this.packagesService.createPackage(dto);
   }
 
+  @Auth(RoleType.CUSTOMER)
   @Get()
-  findAll() {
-    return this.packagesService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.packagesService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePackageDto: UpdatePackageDto) {
-    return this.packagesService.update(+id, updatePackageDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.packagesService.remove(+id);
+  findPackages(@Query('state') state: number, @Query('warehouseId') warehouseId: number) {
+    return this.packagesService.findPackageByState(state, warehouseId);
   }
 }
